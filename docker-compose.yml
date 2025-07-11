@@ -1,0 +1,26 @@
+services:
+    app:
+        image: newdream123/sql_query_runner
+        container_name: sql_query_runner
+        restart: unless-stopped
+        tty: true
+        working_dir: /var/www/html
+        volumes:
+            - ./docker/production/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+        networks:
+            - app-network
+
+    webserver:
+        image: nginx:alpine
+        container_name: nginx-webserver
+        restart: unless-stopped
+        ports:
+            - "80:80"
+        volumes:
+            - ./docker/nginx:/etc/nginx/conf.d/
+        networks:
+            - app-network
+
+networks:
+    app-network:
+        driver: bridge

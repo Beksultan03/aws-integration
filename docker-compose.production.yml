@@ -1,0 +1,49 @@
+services:
+  app:
+    image: domain/production
+    container_name: sqr
+    restart: unless-stopped
+    tty: true
+    working_dir: /var/www/html
+    volumes:
+      - /home/ubuntu/storage/app:/var/www/html/storage/app
+      - /home/ubuntu/cache:/var/www/html/bootstrap/cache
+      - /home/ubuntu/actions-runner/_work/sql_query_runner/sql_query_runner/app:/var/www/html/app
+      - /home/ubuntu/logs:/var/www/html/storage/logs
+      - /home/ubuntu/actions-runner/_work/sql_query_runner/sql_query_runner/routes:/var/www/html/routes
+      - ./docker/production/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+
+  webserver:
+    build:
+      context: .
+      dockerfile: ./docker/production/nginx/Dockerfile
+    container_name: sqr_nginx
+    restart: unless-stopped
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - /home/ubuntu/letsencrypt:/var/www/letsencrypt
+      - /home/ubuntu/storage/app/public:/var/www/html/public/storage
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    container_name: sqr_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  redis_data:

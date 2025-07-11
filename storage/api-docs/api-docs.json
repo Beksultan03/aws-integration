@@ -1,0 +1,3052 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "SqlQueryRunner API",
+        "contact": {},
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://stg-sqr.michaelelectronics2.com/api",
+            "description": "Staging server"
+        },
+        {
+            "url": "https://sqr.michaelelectronics2.com/api",
+            "description": "Production server"
+        },
+        {
+            "url": "http://127.0.0.1:8000/api",
+            "description": "Base server for development"
+        }
+    ],
+    "paths": {
+        "/amazon-ads/campaigns/{campaignId}/ad-groups": {
+            "get": {
+                "tags": [
+                    "Ad Groups"
+                ],
+                "summary": "List all ad groups for a campaign with pagination and filters",
+                "operationId": "f44996cb318a9de497f887fece901855",
+                "parameters": [
+                    {
+                        "name": "campaignId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "searchQuery",
+                        "in": "query",
+                        "description": "Search query string",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filters[state][type]",
+                        "in": "query",
+                        "description": "State filter type",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "select"
+                        }
+                    },
+                    {
+                        "name": "filters[state][value]",
+                        "in": "query",
+                        "description": "State filter value",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "ENABLED"
+                        }
+                    },
+                    {
+                        "name": "filters[defaultBid][type]",
+                        "in": "query",
+                        "description": "Default bid filter type",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "number"
+                        }
+                    },
+                    {
+                        "name": "filters[defaultBid][value][from]",
+                        "in": "query",
+                        "description": "Default bid minimum value",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "example": 12
+                        }
+                    },
+                    {
+                        "name": "filters[defaultBid][value][to]",
+                        "in": "query",
+                        "description": "Default bid maximum value",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "example": 42
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AdGroup"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Ad Groups"
+                ],
+                "summary": "Create a new ad group",
+                "operationId": "36fbdbeb93ca3d3932918bad9e51f2ea",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "campaign_id",
+                                    "name",
+                                    "state",
+                                    "default_bid",
+                                    "per_page",
+                                    "page"
+                                ],
+                                "properties": {
+                                    "campaign_id": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "state": {
+                                        "type": "string",
+                                        "enum": [
+                                            "ENABLED",
+                                            "PAUSED",
+                                            "PROPOSED"
+                                        ]
+                                    },
+                                    "default_bid": {
+                                        "type": "number",
+                                        "minimum": 0.02
+                                    },
+                                    "per_page": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                    },
+                                    "page": {
+                                        "type": "integer",
+                                        "minimum": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ad group created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdGroup"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict error"
+                    }
+                }
+            }
+        },
+        "/amazon-ads/campaigns/{campaignId}/ad-groups/{id}": {
+            "get": {
+                "tags": [
+                    "Ad Groups"
+                ],
+                "summary": "Get ad group by ID",
+                "operationId": "5c7fe3a695d9447257d0648c551c35b0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdGroup"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ad group not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Ad Groups"
+                ],
+                "summary": "Update an existing ad group",
+                "operationId": "210a258161d2eaeca624a2d548d51636",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "campaignId",
+                                    "adGroupId"
+                                ],
+                                "properties": {
+                                    "campaignId": {
+                                        "type": "string"
+                                    },
+                                    "adGroupId": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "state": {
+                                        "type": "string",
+                                        "enum": [
+                                            "ENABLED",
+                                            "PAUSED",
+                                            "PROPOSED"
+                                        ]
+                                    },
+                                    "defaultBid": {
+                                        "type": "number",
+                                        "minimum": 0.02
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ad group updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdGroup"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ad group not found"
+                    },
+                    "409": {
+                        "description": "Conflict error"
+                    }
+                }
+            }
+        },
+        "/amazon-ads/campaigns/{campaignId}/ad-groups/complete": {
+            "post": {
+                "tags": [
+                    "Ad Groups"
+                ],
+                "summary": "Create a complete ad group with keywords and products",
+                "operationId": "bace95616958043d2c5a801f4cc78ed5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "campaignId",
+                                    "name",
+                                    "state",
+                                    "defaultBid",
+                                    "keywords",
+                                    "products"
+                                ],
+                                "properties": {
+                                    "campaignId": {
+                                        "type": "integer"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "state": {
+                                        "type": "string",
+                                        "enum": [
+                                            "ENABLED",
+                                            "PAUSED",
+                                            "PROPOSED"
+                                        ]
+                                    },
+                                    "defaultBid": {
+                                        "type": "number",
+                                        "minimum": 0
+                                    },
+                                    "keywords": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "text": {
+                                                    "type": "string",
+                                                    "maxLength": 255
+                                                },
+                                                "matchType": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "EXACT",
+                                                        "PHRASE",
+                                                        "BROAD"
+                                                    ]
+                                                },
+                                                "bid": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "products": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "identifiers": {
+                                                    "properties": {
+                                                        "asin": {
+                                                            "type": "string",
+                                                            "maxLength": 255
+                                                        },
+                                                        "sku": {
+                                                            "type": "string",
+                                                            "maxLength": 255
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "negativeKeywords": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "text": {
+                                                    "type": "string",
+                                                    "maxLength": 255
+                                                },
+                                                "matchType": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ad group created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "adGroup": {
+                                            "$ref": "#/components/schemas/AdGroup"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/amazon-ads/campaigns": {
+            "get": {
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "List all campaigns with pagination and filters",
+                "operationId": "2d177399c5e49f3b9f05eec825a08bc5",
+                "parameters": [
+                    {
+                        "name": "searchQuery",
+                        "in": "query",
+                        "description": "Search query string",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "maxLength": 255,
+                            "example": "test"
+                        }
+                    },
+                    {
+                        "name": "filters[state][type]",
+                        "in": "query",
+                        "description": "State filter type",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "select"
+                        }
+                    },
+                    {
+                        "name": "filters[state][value]",
+                        "in": "query",
+                        "description": "State filter value",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "ENABLED"
+                        }
+                    },
+                    {
+                        "name": "filters[type][type]",
+                        "in": "query",
+                        "description": "Campaign type filter type",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "select"
+                        }
+                    },
+                    {
+                        "name": "filters[type][value]",
+                        "in": "query",
+                        "description": "Campaign type filter value",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "sponsored_products"
+                        }
+                    },
+                    {
+                        "name": "filters[targetingType][type]",
+                        "in": "query",
+                        "description": "Targeting type filter type",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "select"
+                        }
+                    },
+                    {
+                        "name": "filters[targetingType][value]",
+                        "in": "query",
+                        "description": "Targeting type filter value",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "MANUAL"
+                        }
+                    },
+                    {
+                        "name": "filters[budget][type]",
+                        "in": "query",
+                        "description": "Budget filter type",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "number"
+                        }
+                    },
+                    {
+                        "name": "filters[budget][value][from]",
+                        "in": "query",
+                        "description": "Budget minimum value",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "example": 12
+                        }
+                    },
+                    {
+                        "name": "filters[budget][value][to]",
+                        "in": "query",
+                        "description": "Budget maximum value",
+                        "required": false,
+                        "schema": {
+                            "type": "number",
+                            "example": 42
+                        }
+                    },
+                    {
+                        "name": "sort[orderBy]",
+                        "in": "query",
+                        "description": "Field to sort by",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "startDate"
+                        }
+                    },
+                    {
+                        "name": "sort[orderDirection]",
+                        "in": "query",
+                        "description": "Sort direction",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc",
+                                "default"
+                            ],
+                            "example": "asc"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Campaign"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "total": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Create a new campaign",
+                "operationId": "17968c44f851af351b7ad3bfb1cbdcd4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "state",
+                                    "type",
+                                    "startDate",
+                                    "endDate",
+                                    "budgetType",
+                                    "budgetAmount",
+                                    "targetingType",
+                                    "dynamicBidding"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "state": {
+                                        "type": "string",
+                                        "enum": [
+                                            "ENABLED",
+                                            "PAUSED",
+                                            "PROPOSED"
+                                        ]
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "default": "sponsored_products"
+                                    },
+                                    "startDate": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "endDate": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "budgetType": {
+                                        "type": "string",
+                                        "default": "DAILY"
+                                    },
+                                    "budgetAmount": {
+                                        "type": "number",
+                                        "minimum": 0
+                                    },
+                                    "targetingType": {
+                                        "type": "string",
+                                        "default": "MANUAL"
+                                    },
+                                    "dynamicBidding": {
+                                        "properties": {
+                                            "strategy": {
+                                                "type": "string",
+                                                "default": "AUTO_FOR_SALES"
+                                            },
+                                            "placementBidding": {
+                                                "type": "array",
+                                                "items": {
+                                                    "oneOf": [
+                                                        {
+                                                            "properties": {
+                                                                "placement": {
+                                                                    "type": "string",
+                                                                    "example": "PLACEMENT_TOP"
+                                                                },
+                                                                "percentage": {
+                                                                    "type": "number",
+                                                                    "example": 0
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        {
+                                                            "properties": {
+                                                                "placement": {
+                                                                    "type": "string",
+                                                                    "example": "PLACEMENT_PRODUCT_PAGE"
+                                                                },
+                                                                "percentage": {
+                                                                    "type": "number",
+                                                                    "example": 0
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        {
+                                                            "properties": {
+                                                                "placement": {
+                                                                    "type": "string",
+                                                                    "example": "PLACEMENT_REST_OF_SEARCH"
+                                                                },
+                                                                "percentage": {
+                                                                    "type": "number",
+                                                                    "example": 0
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Campaign created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Campaign"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict error"
+                    }
+                }
+            }
+        },
+        "/amazon-ads/campaigns/statistics": {
+            "get": {
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Get campaign statistics with date range",
+                "operationId": "8be1901b8fe79157c5984370858eba19",
+                "parameters": [
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "description": "Start date for statistics (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "description": "End date for statistics (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "total": {
+                                            "type": "object"
+                                        },
+                                        "grouping": {
+                                            "type": "string"
+                                        },
+                                        "date_range": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/amazon-ads/campaigns/{id}": {
+            "get": {
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Get campaign by ID",
+                "operationId": "539df14c549818080619f37054d70874",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Campaign"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Campaign not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Update an existing campaign",
+                "operationId": "9b29f72df90a956a6c3c526612f2dd44",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "state",
+                                    "type",
+                                    "startDate",
+                                    "endDate",
+                                    "budgetType",
+                                    "budgetAmount",
+                                    "targetingType",
+                                    "dynamicBidding"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "state": {
+                                        "type": "string",
+                                        "enum": [
+                                            "ENABLED",
+                                            "DISABLED",
+                                            "PROPOSED"
+                                        ]
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "default": "sponsored_products"
+                                    },
+                                    "startDate": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "endDate": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "portfolioId": {
+                                        "type": "integer"
+                                    },
+                                    "budgetAmount": {
+                                        "type": "number",
+                                        "minimum": 0
+                                    },
+                                    "targetingType": {
+                                        "type": "string",
+                                        "default": "MANUAL"
+                                    },
+                                    "dynamicBidding": {
+                                        "properties": {
+                                            "strategy": {
+                                                "type": "string",
+                                                "default": "AUTO_FOR_SALES"
+                                            },
+                                            "placementBidding": {
+                                                "type": "array",
+                                                "items": {
+                                                    "oneOf": [
+                                                        {
+                                                            "properties": {
+                                                                "placement": {
+                                                                    "type": "string",
+                                                                    "example": "PLACEMENT_TOP"
+                                                                },
+                                                                "percentage": {
+                                                                    "type": "number",
+                                                                    "example": 0
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        {
+                                                            "properties": {
+                                                                "placement": {
+                                                                    "type": "string",
+                                                                    "example": "PLACEMENT_PRODUCT_PAGE"
+                                                                },
+                                                                "percentage": {
+                                                                    "type": "number",
+                                                                    "example": 0
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        {
+                                                            "properties": {
+                                                                "placement": {
+                                                                    "type": "string",
+                                                                    "example": "PLACEMENT_REST_OF_SEARCH"
+                                                                },
+                                                                "percentage": {
+                                                                    "type": "number",
+                                                                    "example": 0
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Campaign updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Campaign"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Campaign not found"
+                    },
+                    "409": {
+                        "description": "Conflict error"
+                    }
+                }
+            }
+        },
+        "/amazon-ads/campaigns/complete": {
+            "post": {
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Create a complete campaign with ad group, keywords, and products",
+                "operationId": "8431e16008a16a6ae5ec154d707ff187",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "state",
+                                    "type",
+                                    "budgetAmount",
+                                    "budgetType",
+                                    "targetingType",
+                                    "dynamicBidding",
+                                    "adGroup",
+                                    "keywords",
+                                    "products"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "example": ""
+                                    },
+                                    "state": {
+                                        "type": "string",
+                                        "example": "DISABLED"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "sponsored_products"
+                                    },
+                                    "budgetAmount": {
+                                        "type": "number",
+                                        "minimum": 0,
+                                        "example": 0
+                                    },
+                                    "budgetType": {
+                                        "type": "string",
+                                        "example": "DAILY"
+                                    },
+                                    "startDate": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": null,
+                                        "nullable": true
+                                    },
+                                    "endDate": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": null,
+                                        "nullable": true
+                                    },
+                                    "targetingType": {
+                                        "type": "string",
+                                        "example": "MANUAL"
+                                    },
+                                    "dynamicBidding": {
+                                        "properties": {
+                                            "strategy": {
+                                                "type": "string",
+                                                "example": "AUTO_FOR_SALES"
+                                            },
+                                            "placementBidding": {
+                                                "type": "array",
+                                                "items": {
+                                                    "oneOf": [
+                                                        {
+                                                            "properties": {
+                                                                "placement": {
+                                                                    "type": "string",
+                                                                    "example": "PLACEMENT_TOP"
+                                                                },
+                                                                "percentage": {
+                                                                    "type": "number",
+                                                                    "example": 0
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        {
+                                                            "properties": {
+                                                                "placement": {
+                                                                    "type": "string",
+                                                                    "example": "PLACEMENT_PRODUCT_PAGE"
+                                                                },
+                                                                "percentage": {
+                                                                    "type": "number",
+                                                                    "example": 0
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        {
+                                                            "properties": {
+                                                                "placement": {
+                                                                    "type": "string",
+                                                                    "example": "PLACEMENT_REST_OF_SEARCH"
+                                                                },
+                                                                "percentage": {
+                                                                    "type": "number",
+                                                                    "example": 0
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "adGroup": {
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "maxLength": 255,
+                                                "example": ""
+                                            },
+                                            "defaultBid": {
+                                                "type": "number",
+                                                "minimum": 0,
+                                                "example": 0.1
+                                            },
+                                            "state": {
+                                                "type": "string",
+                                                "example": "ENABLED"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "keywords": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "text": {
+                                                    "type": "string",
+                                                    "maxLength": 255
+                                                },
+                                                "matchType": {
+                                                    "type": "string"
+                                                },
+                                                "bid": {
+                                                    "type": "number",
+                                                    "minimum": 0
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "products": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "identifiers": {
+                                                    "properties": {
+                                                        "asin": {
+                                                            "type": "string",
+                                                            "maxLength": 255
+                                                        },
+                                                        "sku": {
+                                                            "type": "string",
+                                                            "maxLength": 255
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "negativeKeywords": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "text": {
+                                                    "type": "string",
+                                                    "maxLength": 255
+                                                },
+                                                "matchType": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Campaign created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "campaign": {
+                                            "$ref": "#/components/schemas/Campaign"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/amazon-ads/update-bid": {
+            "post": {
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Update bid for campaign, ad group, or keyword",
+                "operationId": "224808ad3a0926edfb246b671c608b2b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id",
+                                    "value",
+                                    "type"
+                                ],
+                                "properties": {
+                                    "id": {
+                                        "type": "integer"
+                                    },
+                                    "value": {
+                                        "type": "number",
+                                        "minimum": 0.02
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "keywords",
+                                            "ad-group",
+                                            "campaign"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Bid updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bid updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict error"
+                    }
+                }
+            }
+        },
+        "/amazon-ads/change-state": {
+            "post": {
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Change state of campaign, ad group, keyword, or product",
+                "operationId": "920a69d469e09ba7bef15476824a55bb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id",
+                                    "state",
+                                    "type"
+                                ],
+                                "properties": {
+                                    "id": {
+                                        "type": "integer"
+                                    },
+                                    "state": {
+                                        "type": "string",
+                                        "enum": [
+                                            "ENABLED",
+                                            "DISABLED",
+                                            "PROPOSED"
+                                        ]
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "keywords",
+                                            "ad-group",
+                                            "campaign",
+                                            "products"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Campaign state updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Campaign state updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict error"
+                    }
+                }
+            }
+        },
+        "/email-passwords": {
+            "get": {
+                "tags": [
+                    "Trusted Emails"
+                ],
+                "summary": "Retrieve password chunks for a trusted email",
+                "description": "Returns the password split into chunks with random characters added if the IP address is trusted and the email exists.",
+                "operationId": "e865b023d68c6db89ba9a81ee820f3eb",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "The email for which to retrieve the password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with password chunks",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "example": "abcd1234efgh"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "something went wrong"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Trusted Emails"
+                ],
+                "summary": "Create a new trusted email",
+                "description": "Stores a new trusted email with an encrypted password.",
+                "operationId": "6905dfbdb602e24b3d127a6d4a66a28e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "ip_address": {
+                                        "type": "string",
+                                        "example": "192.168.1.1"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "johndoe@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "secret123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Trusted email created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Trusted email created successfully!"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "ip_address": {
+                                                    "type": "string",
+                                                    "example": "192.168.1.1"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "johndoe@example.com"
+                                                },
+                                                "password": {
+                                                    "type": "string",
+                                                    "example": "encrypted_password_here"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation error."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/order/process-config": {
+            "get": {
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Method of getting processing orders configuration",
+                "operationId": "order_processing_config",
+                "responses": {
+                    "200": {
+                        "description": "Processing orders configuration",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "order_id": {
+                                            "description": "Order ID of the product",
+                                            "type": "string",
+                                            "example": "6981556"
+                                        },
+                                        "page_number": {
+                                            "description": "Page number in the order sequence",
+                                            "type": "string",
+                                            "example": "3/4"
+                                        },
+                                        "serial_number": {
+                                            "description": "Serial number of the product",
+                                            "type": "string",
+                                            "example": "29242Y01000448"
+                                        },
+                                        "sku": {
+                                            "description": "Stock Keeping Unit (SKU) of the product",
+                                            "type": "string",
+                                            "example": "VEL-CDT-ME03764"
+                                        },
+                                        "display_title": {
+                                            "description": "Display title of the product",
+                                            "type": "string",
+                                            "example": "Velztorm LCD Black Praetix VELZ0092 Black DESKTOP-GAMMING i9-14900K 16GB 1TB SSD No OS"
+                                        },
+                                        "details": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "title": {
+                                                        "description": "Item title",
+                                                        "type": "string",
+                                                        "example": "Velztorm LCD Black Praetix VELZ0092 Black DESKTOP-GAMMING/i9-14900K/16GB/1TB SSD/No OS"
+                                                    },
+                                                    "sku": {
+                                                        "description": "Item SKU",
+                                                        "type": "string",
+                                                        "example": "VEL-CDT-ME03764"
+                                                    },
+                                                    "qty": {
+                                                        "description": "Quantity of the item",
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "serial_number": {
+                                                        "description": "Serial number of the item if available",
+                                                        "type": "string",
+                                                        "example": null,
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "summary": {
+                                            "properties": {
+                                                "raid": {
+                                                    "description": "RAID configuration if available",
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "ram": {
+                                                    "description": "RAM of the product",
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "storage": {
+                                                    "description": "Storage capacity of the product",
+                                                    "type": "string",
+                                                    "example": "1024 M.2 PCIe SSD"
+                                                },
+                                                "gpu": {
+                                                    "description": "Graphics Processing Unit (GPU) model",
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "os": {
+                                                    "description": "Operating System installed",
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "cpu": {
+                                                    "description": "Processor (CPU) details",
+                                                    "type": "string",
+                                                    "example": "Intel Core i9-14900K (Box) CPU"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerErrorResponse"
+                    }
+                }
+            }
+        },
+        "/product/details/{serial_number}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Method of getting product details by serial number",
+                "operationId": "details",
+                "parameters": [
+                    {
+                        "name": "serial_number",
+                        "in": "path",
+                        "description": "Product's serial number",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "SMJ09VRM0"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product details for serial number",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "serial_number": {
+                                            "description": "The serial number of the product",
+                                            "type": "string",
+                                            "example": "SMJ09VRM0"
+                                        },
+                                        "order_id": {
+                                            "description": "Order Number linked to the product",
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "raid": {
+                                            "description": "RAID configuration if available",
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "display_title": {
+                                            "description": "Product display title",
+                                            "type": "string",
+                                            "example": "Lenovo ThinkStation P330 SFF 30C7000YUS Desktop/i7-8700/8GB/1TB HDD/Intel UHD 630/Windows 10 Pro",
+                                            "nullable": true
+                                        },
+                                        "ram": {
+                                            "description": "RAM size of the product",
+                                            "type": "string",
+                                            "example": "8GB",
+                                            "nullable": true
+                                        },
+                                        "storage": {
+                                            "description": "Storage capacity of the product",
+                                            "type": "string",
+                                            "example": "1TB HDD",
+                                            "nullable": true
+                                        },
+                                        "gpu": {
+                                            "description": "Graphics Processing Unit (GPU) model",
+                                            "type": "string",
+                                            "example": "Intel UHD 630",
+                                            "nullable": true
+                                        },
+                                        "os": {
+                                            "description": "Operating System installed",
+                                            "type": "string",
+                                            "example": "Windows 10 Pro",
+                                            "nullable": true
+                                        },
+                                        "cpu": {
+                                            "description": "Processor (CPU) details",
+                                            "type": "string",
+                                            "example": "i7-8700",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFoundResponse"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/InternalServerErrorResponse"
+                    }
+                }
+            }
+        },
+        "/windows-keys": {
+            "get": {
+                "tags": [
+                    "Windows Keys"
+                ],
+                "summary": "Get filtered Windows keys",
+                "description": "Returns a collection of Windows keys based on the provided filters and pagination parameters. Access requires a valid access key.",
+                "operationId": "f6403a3bf33a515f5f7a8866995b0f7f",
+                "parameters": [
+                    {
+                        "name": "datetime_from",
+                        "in": "query",
+                        "description": "Filter keys from this datetime",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "datetime_to",
+                        "in": "query",
+                        "description": "Filter keys up to this datetime",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "order_id",
+                        "in": "query",
+                        "description": "Filter keys by order ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "vendor",
+                        "in": "query",
+                        "description": "Filter keys by vendor",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "key_type",
+                        "in": "query",
+                        "description": "Filter keys by key type",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "serial_key",
+                        "in": "query",
+                        "description": "Filter keys by serial number",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter keys by status",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Filtered keys retrieved successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or parameters.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid request or parameters"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "AccessKeyHeader": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Windows Keys"
+                ],
+                "summary": "Upload a file with Windows keys",
+                "description": "Uploads an Excel file containing Windows keys to be processed. Access requires a valid access key.",
+                "operationId": "f82a68ad9b680d920b4700b4227d5605",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file",
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "description": "The file containing Windows keys",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "user_id": {
+                                        "description": "The ID of the user importing the keys",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "File uploaded and keys imported successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Keys imported successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or file format.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid file format"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "AccessKeyHeader": []
+                    }
+                ]
+            }
+        },
+        "/windows-keys/download": {
+            "get": {
+                "tags": [
+                    "Windows Keys"
+                ],
+                "summary": "Download filtered Windows keys",
+                "description": "Generates a download link for an Excel file containing filtered Windows keys based on the provided filters. Access requires a valid access key.",
+                "operationId": "8d636e7d2cf6fbacd407520f1770373a",
+                "parameters": [
+                    {
+                        "name": "datetime_from",
+                        "in": "query",
+                        "description": "Filter keys from this datetime",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "datetime_to",
+                        "in": "query",
+                        "description": "Filter keys up to this datetime",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "order_id",
+                        "in": "query",
+                        "description": "Filter keys by order ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "vendor",
+                        "in": "query",
+                        "description": "Filter keys by vendor",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "key_type",
+                        "in": "query",
+                        "description": "Filter keys by key type",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter keys by status",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Download link generated successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "download_link": {
+                                            "type": "string",
+                                            "example": "https://example.com/path/to/download/file.xlsx"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request or parameters.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid request or parameters"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Generating Excel unsuccessfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "AccessKeyHeader": []
+                    }
+                ]
+            }
+        },
+        "/windows-keys/new": {
+            "get": {
+                "tags": [
+                    "Windows Keys"
+                ],
+                "summary": "Get a Windows key",
+                "description": "Returns a Windows key based on the order ID and key type. Access requires a valid access key.",
+                "operationId": "12e9ac788946079c1d1abab6839f347d",
+                "parameters": [
+                    {
+                        "name": "serial_key",
+                        "in": "query",
+                        "description": "Serial Key to retrieve the key for",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Key found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "key": {
+                                            "type": "string",
+                                            "example": "XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"
+                                        },
+                                        "serial_key": {
+                                            "type": "string",
+                                            "example": "XXXXXXXXXX"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Key not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "No key found for this Key Type"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict occurred.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "A conflict occurred while processing the request"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "AccessKeyHeader": []
+                    }
+                ]
+            }
+        },
+        "/windows-keys/get": {
+            "get": {
+                "tags": [
+                    "Windows Keys"
+                ],
+                "summary": "Retrieve Windows keys by quantity",
+                "description": "Returns a list of Windows keys based on the provided quantities for Pro and Home editions. Access requires a valid access key.",
+                "operationId": "36b5e336fe6d56cb59a63b7437a82cab",
+                "parameters": [
+                    {
+                        "name": "order_id",
+                        "in": "query",
+                        "description": "The Order ID to retrieve keys for",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "The User ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Keys found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "keys": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"
+                                            }
+                                        },
+                                        "order_id": {
+                                            "type": "integer",
+                                            "example": 12345
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Keys not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "No keys found for this Key Type"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict occurred.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "A conflict occurred while processing the request"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "AccessKeyHeader": []
+                    }
+                ]
+            }
+        },
+        "/windows-keys/get-by-quantity": {
+            "get": {
+                "tags": [
+                    "Windows Keys"
+                ],
+                "summary": "Retrieve Windows keys by quantity",
+                "description": "Fetches keys based on the specified quantities for Pro and Home editions. Triggers events for inventory updates and RMA processing.",
+                "operationId": "acf514c616880bb1318def3f68cbffbc",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "The User ID requesting the keys",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 70
+                    },
+                    {
+                        "name": "quantities",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "description": "JSON string representing the quantities of keys. Example: {'home':5, 'pro':10}",
+                            "type": "string"
+                        },
+                        "example": "{'home':5, 'pro':10}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Keys successfully retrieved.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "download_link": {
+                                            "description": "URL for downloading the retrieved keys file",
+                                            "type": "string",
+                                            "example": "https://example.com/download/keys"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Keys not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "No key found for this Key Type"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict occurred.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "A conflict occurred while processing the request"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid input data"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "AccessKeyHeader": []
+                    }
+                ]
+            }
+        },
+        "/windows-keys/send-to-manufacturer": {
+            "post": {
+                "tags": [
+                    "Windows Keys"
+                ],
+                "summary": "Send Windows keys to the manufacturer",
+                "description": "Send a list of Windows keys to the manufacturer for processing. Access requires a valid access key.",
+                "operationId": "601124c6f2c6ffdf2f72a7c59749dfb1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ids",
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "ids": {
+                                        "description": "The IDs of the keys to be sent to the manufacturer",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "user_id": {
+                                        "description": "The ID of the user sending the keys",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Keys successfully sent to the manufacturer.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Keys sent successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid request data"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict occurred.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "A conflict occurred while processing the request"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "AccessKeyHeader": []
+                    }
+                ]
+            }
+        },
+        "/windows-keys/update": {
+            "post": {
+                "tags": [
+                    "Windows Keys"
+                ],
+                "summary": "Set RMA status for Windows keys",
+                "description": "Update the status of a list of Windows keys to indicate they need to be sent to the manufacturer as RMA. Access requires a valid access key.",
+                "operationId": "f5adcf7f303bca43c24c217aa2610c75",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ids",
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "ids": {
+                                        "description": "The IDs of the keys to be set as RMA",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "user_id": {
+                                        "description": "The ID of the user setting the keys as RMA",
+                                        "type": "integer"
+                                    },
+                                    "need_to_download_new_keys": {
+                                        "description": "Flag to indicate if new keys need to be downloaded, defaults to false",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "RMA status set successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "RMA status set successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid request data"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict occurred.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "A conflict occurred while processing the request"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "AccessKeyHeader": []
+                    }
+                ]
+            }
+        },
+        "/windows-keys/handle-rma-error": {
+            "post": {
+                "tags": [
+                    "Windows Keys"
+                ],
+                "summary": "Handle RMA Errors for Windows keys",
+                "description": "Save RMA errors for a specific serial key. Access requires a valid access key.",
+                "operationId": "ac3e9f8fc2e783ab0a099404537963fd",
+                "parameters": [
+                    {
+                        "name": "serial_key",
+                        "in": "query",
+                        "description": "Serial Key to retrieve the key for",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "rma_error",
+                        "in": "query",
+                        "description": "RMA error to save the error about",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "RMA error handled successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Key marked as RMA Needed, error saved successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid request data"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict occurred.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "A conflict occurred while processing the request"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "AccessKeyHeader": []
+                    }
+                ]
+            }
+        },
+        "/windows-keys/update-status": {
+            "post": {
+                "tags": [
+                    "Windows Keys"
+                ],
+                "summary": "Update the status of Windows keys",
+                "description": "Updates the status of multiple Windows keys for a given user.",
+                "operationId": "f8d074d0f54eda0cd20c7522569d2ef0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ids",
+                                    "user_id",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "ids": {
+                                        "description": "Array of Windows key IDs in JSON format",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "user_id": {
+                                        "description": "ID of the user associated with the keys",
+                                        "type": "integer"
+                                    },
+                                    "status": {
+                                        "description": "The new status for the Windows keys",
+                                        "type": "string",
+                                        "enum": [
+                                            "Not used",
+                                            "Used",
+                                            "RMA Needed",
+                                            "Downloaded",
+                                            "Refund",
+                                            "Sent to manufacturer"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Status updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "description": "Response data",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict error due to invalid request data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Error message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "AccessKeyHeader": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AdGroup": {
+                "title": "AdGroup",
+                "description": "AdGroup model",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "campaign_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Summer Products Group"
+                    },
+                    "state": {
+                        "type": "string",
+                        "enum": [
+                            "ENABLED",
+                            "PAUSED",
+                            "PROPOSED"
+                        ],
+                        "example": "ENABLED"
+                    },
+                    "default_bid": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 0.5
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2024-01-01 00:00:00"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2024-01-01 00:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "Campaign": {
+                "title": "Campaign",
+                "description": "Campaign model",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Summer Sale Campaign"
+                    },
+                    "marketplace_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "state": {
+                        "type": "string",
+                        "enum": [
+                            "ENABLED",
+                            "PAUSED",
+                            "PROPOSED"
+                        ],
+                        "example": "ENABLED"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "sponsoredProducts"
+                    },
+                    "startDate": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-01-01"
+                    },
+                    "endDate": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-12-31"
+                    },
+                    "budgetType": {
+                        "type": "string",
+                        "example": "daily"
+                    },
+                    "budgetAmount": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 100
+                    },
+                    "targetingType": {
+                        "type": "string",
+                        "example": "manual"
+                    },
+                    "dynamicBidding": {
+                        "properties": {
+                            "strategy": {
+                                "type": "string",
+                                "example": "legacyForDownOnly"
+                            }
+                        },
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2024-01-01 00:00:00"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "datetime",
+                        "example": "2024-01-01 00:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "BadOperation": {
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Bad operation"
+                    }
+                },
+                "type": "object"
+            },
+            "Forbidden": {
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "This action is unauthorized"
+                    }
+                },
+                "type": "object"
+            },
+            "InternalServerError": {
+                "required": [
+                    "message",
+                    "errors"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Error message"
+                    },
+                    "errors": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "example": "Error message"
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "InvalidData": {
+                "required": [
+                    "message",
+                    "errors"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Invalid data"
+                    },
+                    "errors": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "example": "Validation error"
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "NotFound": {
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "The requested resource is not found"
+                    }
+                },
+                "type": "object"
+            },
+            "Success": {
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "Unauthorized": {
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Unauthorized"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "responses": {
+            "BadOperationResponse": {
+                "description": "Invalid request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/BadOperation"
+                        }
+                    }
+                }
+            },
+            "ForbiddenResponse": {
+                "description": "User does not have access",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Forbidden"
+                        }
+                    }
+                }
+            },
+            "InternalServerErrorResponse": {
+                "description": "Internal Server Error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/InternalServerError"
+                        }
+                    }
+                }
+            },
+            "InvalidDataResponse": {
+                "description": "Incorrect data",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/InvalidData"
+                        }
+                    }
+                }
+            },
+            "NotFoundResponse": {
+                "description": "Entity not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/NotFound"
+                        }
+                    }
+                }
+            },
+            "SuccessResponse": {
+                "description": "Success",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Success"
+                        }
+                    }
+                }
+            },
+            "UnauthorizedResponse": {
+                "description": "User is not authorized",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Unauthorized"
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "AccessKeyHeader": {
+                "type": "apiKey",
+                "description": "Access key needed to access the API",
+                "name": "Access-Key",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Windows Keys",
+            "description": "API Endpoints for managing Windows keys"
+        },
+        {
+            "name": "Ad Groups",
+            "description": "Ad Groups"
+        },
+        {
+            "name": "Campaigns",
+            "description": "Campaigns"
+        },
+        {
+            "name": "Trusted Emails",
+            "description": "Trusted Emails"
+        },
+        {
+            "name": "Order",
+            "description": "Order"
+        },
+        {
+            "name": "Product",
+            "description": "Product"
+        }
+    ]
+}
